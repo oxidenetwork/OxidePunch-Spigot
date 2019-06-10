@@ -55,7 +55,6 @@ public class RightClickListener implements Listener {
     private void fireworkgen(Player launchy, Location location, int amount, int power) {
         Firework f = launchy.getWorld().spawn(location, Firework.class);
         FireworkMeta fm = f.getFireworkMeta();
-        fm.addEffect(FireworkEffect.builder().flicker(false).trail(false).with(FireworkEffect.Type.BURST).withColor(Color.ORANGE).withFade(Color.AQUA).build());
         fm.setPower(power);
         for (int i = 0; i < amount; i++) {
             Firework f2 = launchy.getWorld().spawn(location.add(new Vector(Math.random() - 0.5, 0, Math.random() - 0.5).multiply(10)), Firework.class);
