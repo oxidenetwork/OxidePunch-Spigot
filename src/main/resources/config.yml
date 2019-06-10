@@ -1,3 +1,5 @@
+cooldowntime: 7
+cooldown-message: '&7Slow down there buddy you are still cooling down.'
 message: '&b%player%&7 launched &6%click_player% &7into the air!'
 amount-of-fireworks: 5
 flight-time-of-fireworks: 10
