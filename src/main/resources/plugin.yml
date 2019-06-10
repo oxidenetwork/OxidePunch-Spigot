@@ -3,3 +3,7 @@ version: @version@
 main: com.oxide.staffpunch.Main
 api-version: 1.14
 authors: [deadman96385]
+commands:
+  oxidepunch:
+    description: Brings up the help menu
+    usage: /oxidepunch
