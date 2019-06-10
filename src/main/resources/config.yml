@@ -1,4 +1,4 @@
 message: '&b%player%&7 launched &6%click_player% &7into the air!'
-amount-of-fireworks: 1
+amount-of-fireworks: 5
 flight-time-of-fireworks: 10
 launch-power: 5
