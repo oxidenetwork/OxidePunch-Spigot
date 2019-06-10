@@ -1,13 +1,10 @@
 package com.oxide.staffpunch;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
 import org.bukkit.entity.Firework;
-import org.bukkit.event.Listener;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -31,14 +28,14 @@ public class RightClickListener implements Listener {
                 if (!nofall.contains(click_player)) {
                     nofall.add(click_player);
                 }
-                fireworkgen(click_player);
+                fireworkgen(click_player, click_player.getLocation());
 
             }
         }
     }
 
-    private void fireworkgen(Player launchy) {
-        Firework f = launchy.getPlayer().getWorld().spawn(launchy.getPlayer().getLocation(), Firework.class);
+    private void fireworkgen(Player launchy, Location location) {
+        Firework f = launchy.getPlayer().getWorld().spawn(location, Firework.class);
         FireworkMeta fm = f.getFireworkMeta();
         fm.addEffect(FireworkEffect.builder().flicker(false).trail(false).with(FireworkEffect.Type.BURST).withColor(Color.ORANGE).withFade(Color.AQUA).build());
         fm.setPower(1);
