@@ -20,7 +20,10 @@ public class RightClickListener implements Listener {
     @EventHandler
     public void RightClick(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        Player click_player = ((Player) event.getRightClicked()).getPlayer();
+        Player click_player = ((Player) event.getRightClicked()).getPlayer();;
+        if (!player.hasPermission("oxidepunch.use") || !click_player.hasPermission("oxidepunch.use")) {
+            return;
+        }
         if (event.getRightClicked() instanceof Player) {
             if (event.getHand() == EquipmentSlot.HAND) {
                 Bukkit.getServer().broadcastMessage(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " launched " + ChatColor.DARK_RED + click_player.getName() + ChatColor.GREEN + " into the air");
