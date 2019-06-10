@@ -20,7 +20,7 @@ public class RightClickListener implements Listener {
     @EventHandler
     public void RightClick(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        Player click_player = ((Player) event.getRightClicked()).getPlayer();;
+        Player click_player = ((Player) event.getRightClicked());;
         if (!player.hasPermission("oxidepunch.use") || !click_player.hasPermission("oxidepunch.use")) {
             return;
         }
