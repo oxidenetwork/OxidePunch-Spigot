@@ -26,12 +26,12 @@ public class RightClickListener implements Listener {
         }
         if (event.getRightClicked() instanceof Player) {
             if (event.getHand() == EquipmentSlot.HAND) {
-                Bukkit.getServer().broadcastMessage(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " launched " + ChatColor.DARK_RED + click_player.getName() + ChatColor.GREEN + " into the air");
-                click_player.setVelocity(new Vector(0, 5, 0));
+                Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', Main.plugin.getConfig().getString("message").replaceAll("%player%", player.getDisplayName()).replaceAll("%click_player%", click_player.getDisplayName())));
+                click_player.setVelocity(new Vector(0, Main.plugin.getConfig().getInt("launch-power"), 0));
                 if (!nofall.contains(click_player)) {
                     nofall.add(click_player);
                 }
-                fireworkgen(click_player, click_player.getLocation(), 5, 10);
+                fireworkgen(click_player, click_player.getLocation(), Main.plugin.getConfig().getInt("amount-of-fireworks"), Main.plugin.getConfig().getInt("flight-time-of-fireworks"));
 
             }
         }
