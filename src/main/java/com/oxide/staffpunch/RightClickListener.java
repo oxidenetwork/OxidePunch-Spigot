@@ -9,7 +9,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -21,42 +20,41 @@ public class RightClickListener implements Listener {
 
     @EventHandler
     public void RightClick(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        Player click_player = ((Player) event.getRightClicked());
         if (!Main.plugin.getConfig().getStringList("disabled-worlds").contains(event.getPlayer().getWorld().getName())) {
-            Player player = event.getPlayer();
-            Player click_player = ((Player) event.getRightClicked());
-            if (!player.hasPermission("oxidepunch.use") || !click_player.hasPermission("oxidepunch.use")) {
-                return;
-            }
-            if (cooldown.contains(player)) {
-                player.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', Main.plugin.getConfig().getString("cooldown-message")));
-                return;
-            }
-            if (event.getRightClicked() instanceof Player) {
-                int cooldowntime = Main.plugin.getConfig().getInt("cooldowntime");
-                if (event.getHand() == EquipmentSlot.HAND) {
+            if (event.getHand() == EquipmentSlot.HAND) {
+                if (!cooldown.contains(player)) {
+                    if (player.hasPermission("oxidepunch.use") || click_player.hasPermission("oxidepunch.use")) {
+                        if (event.getRightClicked() instanceof Player) {
+                            int cooldowntime = Main.plugin.getConfig().getInt("cooldowntime");
 
-                    fireworkgen(click_player, click_player.getLocation(), Main.plugin.getConfig().getInt("amount-of-fireworks"), Main.plugin.getConfig().getInt("flight-time-of-fireworks"));
-                    for (int i = 0; i < 4; i++) {
-                        click_player.getWorld().playEffect(click_player.getLocation(), Effect.valueOf(Main.plugin.getConfig().getString("particle")), 4);
-                    }
-                    click_player.setVelocity(new Vector(0, Main.plugin.getConfig().getInt("launch-power"), 0));
-                    for (int i = 0; i < 2; i++) {
-                        click_player.playSound(click_player.getLocation(), org.bukkit.Sound.valueOf(Main.plugin.getConfig().getString("sound")), 1.0F, 0.0F);
-                    }
-                    Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', Main.plugin.getConfig().getString("message").replaceAll("%player%", player.getDisplayName()).replaceAll("%click_player%", click_player.getDisplayName())));
+                            fireworkgen(click_player, click_player.getLocation(), Main.plugin.getConfig().getInt("amount-of-fireworks"), Main.plugin.getConfig().getInt("flight-time-of-fireworks"));
+                            for (int i = 0; i < 4; i++) {
+                                click_player.getWorld().playEffect(click_player.getLocation(), Effect.valueOf(Main.plugin.getConfig().getString("particle")), 4);
+                            }
+                            click_player.setVelocity(new Vector(0, Main.plugin.getConfig().getInt("launch-power"), 0));
+                            for (int i = 0; i < 2; i++) {
+                                click_player.playSound(click_player.getLocation(), org.bukkit.Sound.valueOf(Main.plugin.getConfig().getString("sound")), 1.0F, 0.0F);
+                            }
+                            Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', Main.plugin.getConfig().getString("message").replaceAll("%player%", player.getDisplayName()).replaceAll("%click_player%", click_player.getDisplayName())));
 
-                    cooldown.add(player);
-                    if (player.hasPermission("oxidepunch.bypasscooldown")) {
-                        cooldown.remove(player);
+                            cooldown.add(player);
+                            if (player.hasPermission("oxidepunch.bypasscooldown")) {
+                                cooldown.remove(player);
+                            }
+                            if (!nofall.contains(click_player)) {
+                                nofall.add(click_player);
+                            }
+                            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> cooldown.remove(player), cooldowntime * 20L);
+                        }
                     }
-                    if (!nofall.contains(click_player)) {
-                        nofall.add(click_player);
-                    }
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask((Plugin) this, () -> cooldown.remove(player), cooldowntime * 20);
+                } else {
+                    player.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', Main.plugin.getConfig().getString("cooldown-message")));
                 }
             }
         } else {
-            event.getPlayer().sendMessage(Main.plugin.getConfig().getString("world-disabled"));
+            player.sendMessage(Main.plugin.getConfig().getString("world-disabled"));
         }
     }
 
