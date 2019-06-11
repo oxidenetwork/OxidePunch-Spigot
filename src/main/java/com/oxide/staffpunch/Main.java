@@ -103,12 +103,12 @@ public class Main extends JavaPlugin {
                 l.add("power");
                 l.add("firework");
                 l.add("reload");
-            } else if (args.length == 2) {
-                l.add("1");
-                l.add("2");
-                l.add("3");
-                l.add("4");
-                l.add("5");
+            }
+            if (args[0].equalsIgnoreCase("firework") || args[0].equalsIgnoreCase("power")) {
+                if (args.length == 2) {
+                    l.add("1");
+                    l.add("2");
+                }
             }
             return l;
         }
