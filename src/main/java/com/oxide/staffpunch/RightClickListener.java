@@ -1,6 +1,9 @@
 package com.oxide.staffpunch;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +28,7 @@ public class RightClickListener implements Listener {
         if (!Main.plugin.getConfig().getStringList("disabled-worlds").contains(event.getPlayer().getWorld().getName())) {
             if (event.getHand() == EquipmentSlot.HAND) {
                 if (!cooldown.contains(player)) {
-                    if (player.hasPermission("oxidepunch.use") || click_player.hasPermission("oxidepunch.use")) {
+                    if (player.hasPermission("oxidepunch.use") && click_player.hasPermission("oxidepunch.use")) {
                         if (event.getRightClicked() instanceof Player) {
                             int cooldowntime = Main.plugin.getConfig().getInt("cooldowntime");
 
