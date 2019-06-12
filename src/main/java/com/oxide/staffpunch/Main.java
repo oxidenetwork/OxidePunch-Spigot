@@ -13,12 +13,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
 
     public static Main plugin;
+
+    private List<String> commandList = Arrays.asList("power", "firework", "sound", "particle", "reload");
+    private List<String> soundList = Arrays.asList("ENTITY_EXPERIENCE_ORB_PICKUP", "ENTITY_PANDA_SNEEZE", "ENTITY_PUFFER_FISH_STING",
+            "ENTITY_SHULKER_SHOOT", "ENTITY_SHULKER_TELEPORT", "ENTITY_STRAY_DEATH", "ENTITY_VEX_DEATH", "ENTITY_WANDERING_TRADER_YES",
+            "ENTITY_WITHER_HURT", "ENTITY_ZOMBIE_ATTACK_IRON_DOOR", "ITEM_TRIDENT_RIPTIDE_1", "ITEM_TRIDENT_THROW");
+    private List<String> particleList = Arrays.asList("MOBSPAWNER_FLAMES", "SMOKE", "POTION_BREAK", "VILLAGER_PLANT_GROW", "DRAGON_BREATH", "END_GATEWAY_SPAWN", "ENDER_SIGNAL");
 
     @Override
     public void onDisable() {
@@ -102,6 +109,42 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("Invalid number of fireworks");
                     return true;
                 }
+            } else if (args[0].equalsIgnoreCase("sound")) {
+                if (args.length == 1) {
+                    sender.sendMessage("Sound type not selected please select one");
+                    return true;
+                } else {
+                    for (String s : soundList) {
+                        if (args[1].equalsIgnoreCase(s)) {
+                            playerConfig.set("player.sound", s);
+                            try {
+                                playerConfig.save(f);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            return true;
+                        }
+                    }
+                }
+
+            } else if (args[0].equalsIgnoreCase("particle")) {
+                if (args.length == 1) {
+                    sender.sendMessage("Particle type not selected please select one");
+                    return true;
+                } else {
+                    for (String p : particleList) {
+                        if (args[1].equalsIgnoreCase(p)) {
+                            playerConfig.set("player.particles", p);
+                            try {
+                                playerConfig.save(f);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            return true;
+                        }
+                    }
+                }
+
             }
         }
         return false;
@@ -115,15 +158,24 @@ public class Main extends JavaPlugin {
             List<String> l = new ArrayList<>();
 
             if (args.length == 1) {
-                l.add("power");
-                l.add("firework");
-                l.add("reload");
+                l.addAll(commandList);
             }
             if (args[0].equalsIgnoreCase("firework") || args[0].equalsIgnoreCase("power")) {
                 if (args.length == 2) {
                     for (int i = 1; i < 11; i++) {
                         l.add(Integer.toString(i));
                     }
+                }
+            }
+            if (args[0].equalsIgnoreCase("sound")) {
+                if (args.length == 2) {
+                    l.addAll(soundList);
+                }
+            }
+
+            if (args[0].equalsIgnoreCase("particle")) {
+                if (args.length == 2) {
+                    l.addAll(particleList);
                 }
             }
             return l;
