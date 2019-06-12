@@ -12,13 +12,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class RightClickListener implements Listener {
@@ -103,42 +101,6 @@ public class RightClickListener implements Listener {
             if (nofall.contains(flier)) {
                 event.setCancelled(true);
                 nofall.remove(flier);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        if (player.hasPermission("oxidepunch.use")) {
-            String playerUuid = player.getUniqueId().toString();
-            File userdata = new File(Main.plugin.getDataFolder() + File.separator + "Players");
-
-            if (!userdata.exists()) {
-                userdata.mkdir();
-            }
-
-            File f = new File(userdata + File.separator + playerUuid + ".yml");
-            FileConfiguration playerConfig = YamlConfiguration.loadConfiguration(f);
-            if (f.exists()) {
-                updateValues(player);
-            } else {
-                try {
-                    f.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                playerConfig.set("player.power", Main.plugin.getConfig().getInt("launch-power"));
-                playerConfig.set("player.fireworks", Main.plugin.getConfig().getInt("amount-of-fireworks"));
-                playerConfig.set("player.particles", Main.plugin.getConfig().getString("particle"));
-                playerConfig.set("player.sound", Main.plugin.getConfig().getString("sound"));
-                playerConfig.set("player.flighttime", Main.plugin.getConfig().getInt("flight-time-of-fireworks"));
-                try {
-                    playerConfig.save(f);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
             }
         }
     }

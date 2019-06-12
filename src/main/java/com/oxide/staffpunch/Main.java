@@ -63,6 +63,34 @@ public class Main extends JavaPlugin {
                 return true;
             }
 
+            if (args.length == 2) {
+                Player player = ((Player) sender).getPlayer();
+                if (player.hasPermission("oxidepunch.use")) {
+                    if (!userdata.exists()) {
+                        userdata.mkdir();
+                    }
+
+                    if (!f.exists()) {
+                        try {
+                            f.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        playerConfig.set("player.power", Main.plugin.getConfig().getInt("launch-power"));
+                        playerConfig.set("player.fireworks", Main.plugin.getConfig().getInt("amount-of-fireworks"));
+                        playerConfig.set("player.particles", Main.plugin.getConfig().getString("particle"));
+                        playerConfig.set("player.sound", Main.plugin.getConfig().getString("sound"));
+                        playerConfig.set("player.flighttime", Main.plugin.getConfig().getInt("flight-time-of-fireworks"));
+                        try {
+                            playerConfig.save(f);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+
             if (args[0].equalsIgnoreCase("power")) {
                 if (args.length == 1) {
                     sender.sendMessage("No Power Level specified eg. 1-10");
