@@ -4,22 +4,33 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class RightClickListener implements Listener {
 
     private ArrayList<Player> cooldown = new ArrayList<>();
     private ArrayList<Player> nofall = new ArrayList<>();
+
+    private Integer playerpower;
+    private Integer playerfireworks;
+    private String playerparticles;
+    private String playersound;
+    private Integer playerflighttime;
 
     @EventHandler
     public void RightClick(PlayerInteractEntityEvent event) {
@@ -32,13 +43,15 @@ public class RightClickListener implements Listener {
                         if (event.getRightClicked() instanceof Player) {
                             int cooldowntime = Main.plugin.getConfig().getInt("cooldowntime");
 
-                            fireworkgen(click_player, click_player.getLocation(), Main.plugin.getConfig().getInt("amount-of-fireworks"), Main.plugin.getConfig().getInt("flight-time-of-fireworks"));
+                            updateValues(player);
+
+                            fireworkgen(click_player, click_player.getLocation(), playerfireworks, playerflighttime);
                             for (int i = 0; i < 4; i++) {
-                                click_player.getWorld().playEffect(click_player.getLocation(), Effect.valueOf(Main.plugin.getConfig().getString("particle")), 4);
+                                click_player.getWorld().playEffect(click_player.getLocation(), Effect.valueOf(playerparticles), 4);
                             }
-                            click_player.setVelocity(new Vector(0, Main.plugin.getConfig().getInt("launch-power"), 0));
+                            click_player.setVelocity(new Vector(0, playerpower, 0));
                             for (int i = 0; i < 2; i++) {
-                                click_player.playSound(click_player.getLocation(), org.bukkit.Sound.valueOf(Main.plugin.getConfig().getString("sound")), 1.0F, 0.0F);
+                                click_player.playSound(click_player.getLocation(), org.bukkit.Sound.valueOf(playersound), 1.0F, 0.0F);
                             }
                             Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', Main.plugin.getConfig().getString("message").replaceAll("%player%", player.getDisplayName()).replaceAll("%click_player%", click_player.getDisplayName())));
 
@@ -62,13 +75,24 @@ public class RightClickListener implements Listener {
     }
 
     private void fireworkgen(Player launchy, Location location, int amount, int power) {
-        Firework f = launchy.getWorld().spawn(location, Firework.class);
-        FireworkMeta fm = f.getFireworkMeta();
-        fm.setPower(power);
         for (int i = 0; i < amount; i++) {
-            Firework f2 = launchy.getWorld().spawn(location.add(new Vector(Math.random() - 0.5, 0, Math.random() - 0.5).multiply(10)), Firework.class);
-            f2.setFireworkMeta(fm);
+            Firework f = launchy.getWorld().spawn(location.add(new Vector(Math.random() - 0.5, 0, Math.random() - 0.5).multiply(10)), Firework.class);
+            FireworkMeta fm = f.getFireworkMeta();
+            fm.setPower(power);
+            f.setFireworkMeta(fm);
         }
+    }
+
+    private void updateValues(Player player) {
+        File userdata = new File(Main.plugin.getDataFolder() + File.separator + "Players");
+        File f = new File(userdata + File.separator + player.getUniqueId().toString() + ".yml");
+        FileConfiguration playerConfig = YamlConfiguration.loadConfiguration(f);
+
+        playerpower = playerConfig.getInt("player.power");
+        playerfireworks = playerConfig.getInt("player.fireworks");
+        playerparticles = playerConfig.getString("player.particles");
+        playersound = playerConfig.getString("player.sound");
+        playerflighttime = playerConfig.getInt("player.flighttime");
     }
 
     @EventHandler
@@ -82,4 +106,41 @@ public class RightClickListener implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (player.hasPermission("oxidepunch.use")) {
+            String playerUuid = player.getUniqueId().toString();
+            File userdata = new File(Main.plugin.getDataFolder() + File.separator + "Players");
+
+            if (!userdata.exists()) {
+                userdata.mkdir();
+            }
+
+            File f = new File(userdata + File.separator + playerUuid + ".yml");
+            FileConfiguration playerConfig = YamlConfiguration.loadConfiguration(f);
+            if (f.exists()) {
+                updateValues(player);
+            } else {
+                try {
+                    f.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                playerConfig.set("player.power", Main.plugin.getConfig().getInt("launch-power"));
+                playerConfig.set("player.fireworks", Main.plugin.getConfig().getInt("amount-of-fireworks"));
+                playerConfig.set("player.particles", Main.plugin.getConfig().getString("particle"));
+                playerConfig.set("player.sound", Main.plugin.getConfig().getString("sound"));
+                playerConfig.set("player.flighttime", Main.plugin.getConfig().getInt("flight-time-of-fireworks"));
+                try {
+                    playerConfig.save(f);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
 }

@@ -5,9 +5,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,9 +36,14 @@ public class Main extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
         if (cmd.getName().equalsIgnoreCase("oxidepunch")) {
             if (!(sender instanceof Player))
                 return true;
+
+            File userdata = new File(Main.plugin.getDataFolder() + File.separator + "Players");
+            File f = new File(userdata + File.separator + ((Player) sender).getUniqueId().toString() + ".yml");
+            FileConfiguration playerConfig = YamlConfiguration.loadConfiguration(f);
 
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.RED + "Thanks for installing OxidePunch " + Bukkit.getServer().getPluginManager().getPlugin("OxidePunch").getDescription().getVersion());
@@ -44,19 +53,22 @@ public class Main extends JavaPlugin {
 
             if (args[0].equalsIgnoreCase("power")) {
                 if (args.length == 1) {
-                    sender.sendMessage("No Power Level specified eg. 1-2");
+                    sender.sendMessage("No Power Level specified eg. 1-10");
                     return true;
                 } else {
-                    if (args[1].equalsIgnoreCase("1")) {
-                        sender.sendMessage("Power Level 1");
-                        return true;
-                    } else if (args[1].equalsIgnoreCase("2")) {
-                        sender.sendMessage("Power Level 2");
-                        return true;
-                    } else {
-                        sender.sendMessage("Invalid power level");
-                        return true;
+                    for (int i = 1; i < 11; i++) {
+                        if (args[1].equalsIgnoreCase(Integer.toString(i))) {
+                            playerConfig.set("player.power", i);
+                            try {
+                                playerConfig.save(f);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            return true;
+                        }
                     }
+                    sender.sendMessage("Invalid power level");
+                    return true;
                 }
             } else if (args[0].equalsIgnoreCase("reload")) {
                 if (args.length == 1) {
@@ -76,16 +88,19 @@ public class Main extends JavaPlugin {
                     sender.sendMessage("Number of fireworks not specified eg. 1-2");
                     return true;
                 } else {
-                    if (args[1].equalsIgnoreCase("1")) {
-                        sender.sendMessage("Firework 1");
-                        return true;
-                    } else if (args[1].equalsIgnoreCase("2")) {
-                        sender.sendMessage("Firework 2");
-                        return true;
-                    } else {
-                        sender.sendMessage("Invalid firework number");
-                        return true;
+                    for (int i = 1; i < 11; i++) {
+                        if (args[1].equalsIgnoreCase(Integer.toString(i))) {
+                            playerConfig.set("player.fireworks", i);
+                            try {
+                                playerConfig.save(f);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            return true;
+                        }
                     }
+                    sender.sendMessage("Invalid number of fireworks");
+                    return true;
                 }
             }
         }
@@ -106,8 +121,9 @@ public class Main extends JavaPlugin {
             }
             if (args[0].equalsIgnoreCase("firework") || args[0].equalsIgnoreCase("power")) {
                 if (args.length == 2) {
-                    l.add("1");
-                    l.add("2");
+                    for (int i = 1; i < 11; i++) {
+                        l.add(Integer.toString(i));
+                    }
                 }
             }
             return l;
