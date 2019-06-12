@@ -1,13 +1,18 @@
 package com.oxide.staffpunch;
 
 
+import de.themoep.inventorygui.GuiElementGroup;
+import de.themoep.inventorygui.GuiPageElement;
+import de.themoep.inventorygui.InventoryGui;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -21,7 +26,7 @@ public class Main extends JavaPlugin {
 
     public static Main plugin;
 
-    private List<String> commandList = Arrays.asList("power", "firework", "sound", "particle", "reload");
+    private List<String> commandList = Arrays.asList("power", "firework", "sound", "particle", "reload", "menu");
     private List<String> soundList = Arrays.asList("ENTITY_EXPERIENCE_ORB_PICKUP", "ENTITY_PANDA_SNEEZE", "ENTITY_PUFFER_FISH_STING",
             "ENTITY_SHULKER_SHOOT", "ENTITY_SHULKER_TELEPORT", "ENTITY_STRAY_DEATH", "ENTITY_VEX_DEATH", "ENTITY_WANDERING_TRADER_YES",
             "ENTITY_WITHER_HURT", "ENTITY_ZOMBIE_ATTACK_IRON_DOOR", "ITEM_TRIDENT_RIPTIDE_1", "ITEM_TRIDENT_THROW");
@@ -144,7 +149,18 @@ public class Main extends JavaPlugin {
                         }
                     }
                 }
-
+            } else if (args[0].equalsIgnoreCase("menu")) {
+                if (args.length == 1) {
+                    Player p = ((Player) sender).getPlayer();
+                    GuiElementGroup group = new GuiElementGroup('x');
+                    InventoryGui gui = new InventoryGui(plugin, p, "&cOnline&4Players", plugin.getConfig().getStringList("matrix").toArray(new String[0]));
+                    gui.addElement(new GuiPageElement('b', new ItemStack(Material.COAL, 1), GuiPageElement.PageAction.PREVIOUS, "&cPREVIOUS"));
+                    gui.addElement(new GuiPageElement('f', new ItemStack(Material.CHARCOAL, 1), GuiPageElement.PageAction.NEXT, "&aNEXT"));
+                    gui.setFiller(new ItemStack(Material.GRAY_STAINED_GLASS, 1));
+                    group.setFiller(gui.getFiller());
+                    gui.addElement(group);
+                    gui.show(p);
+                }
             }
         }
         return false;

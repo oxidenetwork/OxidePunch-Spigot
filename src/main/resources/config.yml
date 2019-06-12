@@ -10,3 +10,7 @@ launch-power: 5
 disabled-worlds:
 #- world
 
+matrix:
+  - '         '
+  - ' xxxxxxx '
+  - 'b       f'
