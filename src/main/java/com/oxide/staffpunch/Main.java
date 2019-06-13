@@ -131,7 +131,7 @@ public class Main extends JavaPlugin {
                         return true;
                     } else {
                         for (int i = 1; i < 11; i++) {
-                            if (args[1].equalsIgnoreCase(Integer.toString(i))) {
+                            if (args[2].equalsIgnoreCase(Integer.toString(i))) {
                                 playerConfig.set("player.fireworknumber", i);
                                 try {
                                     playerConfig.save(f);
@@ -141,15 +141,15 @@ public class Main extends JavaPlugin {
                                 return true;
                             }
                         }
-                        sender.sendMessage("Invalid number of fireworks");
+                        sender.sendMessage("You can only have 1-10 fireworks");
                         return true;
                     }
                 } else if (args[1].equalsIgnoreCase("flight-time")) {
                     if (args.length == 2) {
-                        sender.sendMessage("Number of seconds before the firework explodes not specified eg. 1-10");
+                        sender.sendMessage("Number of seconds before the firework explodes not specified eg. 1-3");
                         return true;
                     } else {
-                        for (int i = 1; i < 11; i++) {
+                        for (int i = 1; i < 4; i++) {
                             if (args[2].equalsIgnoreCase(Integer.toString(i))) {
                                 playerConfig.set("player.fireworkflighttime", i);
                                 try {
@@ -160,7 +160,7 @@ public class Main extends JavaPlugin {
                                 return true;
                             }
                         }
-                        sender.sendMessage("Invalid number of fireworks");
+                        sender.sendMessage("You can only have a flight time of 1-3 seconds");
                         return true;
                     }
                 } else if (args[1].equalsIgnoreCase("flicker")) {
