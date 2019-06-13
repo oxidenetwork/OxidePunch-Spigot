@@ -4,8 +4,13 @@ message: '&b%player%&7 launched &6%click_player% &7into the air!'
 world-disabled: '&7You cant launch people in this world.'
 sound: 'ENTITY_EXPERIENCE_ORB_PICKUP'
 particle: 'MOBSPAWNER_FLAMES'
+firwork-flicker: true
+firework-trail: true
+firework-type: BALL
+firework-color: red
+firework-fade: orange
 amount-of-fireworks: 5
-flight-time-of-fireworks: 10
+flight-time-of-fireworks: 1
 launch-power: 5
 disabled-worlds:
 #- world

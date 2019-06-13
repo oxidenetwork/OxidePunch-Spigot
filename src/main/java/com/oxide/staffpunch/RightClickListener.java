@@ -1,9 +1,6 @@
 package com.oxide.staffpunch;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Firework;
@@ -25,10 +22,15 @@ public class RightClickListener implements Listener {
     private ArrayList<Player> nofall = new ArrayList<>();
 
     private Integer playerpower;
-    private Integer playerfireworks;
     private String playerparticles;
     private String playersound;
-    private Integer playerflighttime;
+    private Boolean playerfireworkflicker;
+    private Boolean playerfireworktrail;
+    private String playerfireworktype;
+    private String playerfireworkcolor;
+    private String playerfireworkfade;
+    private Integer playerfireworknumber;
+    private Integer playerfireworkflighttime;
 
     @EventHandler
     public void RightClick(PlayerInteractEntityEvent event) {
@@ -43,7 +45,7 @@ public class RightClickListener implements Listener {
 
                             updateValues(player);
 
-                            fireworkgen(click_player, click_player.getLocation(), playerfireworks, playerflighttime);
+                            fireworkgen(click_player, click_player.getLocation(), playerfireworknumber, playerfireworkflighttime * 2);
                             for (int i = 0; i < 4; i++) {
                                 click_player.getWorld().playEffect(click_player.getLocation(), Effect.valueOf(playerparticles), 4);
                             }
@@ -76,6 +78,13 @@ public class RightClickListener implements Listener {
         for (int i = 0; i < amount; i++) {
             Firework f = launchy.getWorld().spawn(location.add(new Vector(Math.random() - 0.5, 0, Math.random() - 0.5).multiply(10)), Firework.class);
             FireworkMeta fm = f.getFireworkMeta();
+            fm.addEffect((FireworkEffect.builder()
+                    .flicker((playerfireworkflicker))
+                    .trail((playerfireworktrail))
+                    .with(FireworkEffect.Type.valueOf(playerfireworktype))
+                    .withColor(colorpicker(playerfireworkcolor))
+                    .withFade(colorpicker(playerfireworkfade))
+                    .build()));
             fm.setPower(power);
             f.setFireworkMeta(fm);
         }
@@ -86,11 +95,29 @@ public class RightClickListener implements Listener {
         File f = new File(userdata + File.separator + player.getUniqueId().toString() + ".yml");
         FileConfiguration playerConfig = YamlConfiguration.loadConfiguration(f);
 
-        playerpower = playerConfig.getInt("player.power");
-        playerfireworks = playerConfig.getInt("player.fireworks");
-        playerparticles = playerConfig.getString("player.particles");
-        playersound = playerConfig.getString("player.sound");
-        playerflighttime = playerConfig.getInt("player.flighttime");
+        if (f.exists()) {
+            playerpower = playerConfig.getInt("player.power");
+            playerparticles = playerConfig.getString("player.particles");
+            playersound = playerConfig.getString("player.sound");
+            playerfireworknumber = playerConfig.getInt("player.fireworknumber");
+            playerfireworkflighttime = playerConfig.getInt("player.fireworkflighttime");
+            playerfireworkflicker = playerConfig.getBoolean("player.fireworkflicker");
+            playerfireworktrail = playerConfig.getBoolean("player.fireworktrail");
+            playerfireworktype = playerConfig.getString("player.fireworktype");
+            playerfireworkcolor = playerConfig.getString("player.fireworkcolor");
+            playerfireworkfade = playerConfig.getString("player.fireworkfade");
+        } else {
+            playerpower = Main.plugin.getConfig().getInt("launch-power");
+            playerparticles = Main.plugin.getConfig().getString("particle");
+            playersound = Main.plugin.getConfig().getString("sound");
+            playerfireworknumber = Main.plugin.getConfig().getInt("amount-of-fireworks");
+            playerfireworkflighttime = Main.plugin.getConfig().getInt("flight-time-of-fireworks");
+            playerfireworkflicker = Main.plugin.getConfig().getBoolean("firework-flicker");
+            playerfireworktrail = Main.plugin.getConfig().getBoolean("firework-trail");
+            playerfireworktype = Main.plugin.getConfig().getString("firework-type");
+            playerfireworkcolor = Main.plugin.getConfig().getString("firework-color");
+            playerfireworkfade = Main.plugin.getConfig().getString("firework-fade");
+        }
     }
 
     @EventHandler
@@ -102,6 +129,65 @@ public class RightClickListener implements Listener {
                 event.setCancelled(true);
                 nofall.remove(flier);
             }
+        }
+    }
+
+    private Color colorpicker(String color) {
+        Color fireworkcolor;
+        switch (color) {
+            case "aqua":
+                fireworkcolor = Color.AQUA;
+                return fireworkcolor;
+            case "black":
+                fireworkcolor = Color.BLACK;
+                return fireworkcolor;
+            case "blue":
+                fireworkcolor = Color.BLUE;
+                return fireworkcolor;
+            case "fuchsia":
+                fireworkcolor = Color.FUCHSIA;
+                return fireworkcolor;
+            case "gray":
+                fireworkcolor = Color.GRAY;
+                return fireworkcolor;
+            case "green":
+                fireworkcolor = Color.GREEN;
+                return fireworkcolor;
+            case "lime":
+                fireworkcolor = Color.LIME;
+                return fireworkcolor;
+            case "maroon":
+                fireworkcolor = Color.MAROON;
+                return fireworkcolor;
+            case "navy":
+                fireworkcolor = Color.NAVY;
+                return fireworkcolor;
+            case "olive":
+                fireworkcolor = Color.OLIVE;
+                return fireworkcolor;
+            case "orange":
+                fireworkcolor = Color.ORANGE;
+                return fireworkcolor;
+            case "purple":
+                fireworkcolor = Color.PURPLE;
+                return fireworkcolor;
+            case "red":
+                fireworkcolor = Color.RED;
+                return fireworkcolor;
+            case "silver":
+                fireworkcolor = Color.SILVER;
+                return fireworkcolor;
+            case "teal":
+                fireworkcolor = Color.TEAL;
+                return fireworkcolor;
+            case "white":
+                fireworkcolor = Color.WHITE;
+                return fireworkcolor;
+            case "yellow":
+                fireworkcolor = Color.YELLOW;
+                return fireworkcolor;
+            default:
+                throw new IllegalStateException("Unexpected value: " + color);
         }
     }
 }
